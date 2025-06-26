@@ -3,19 +3,19 @@ package ru.practicum.shareit.user.repository;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class UserRepositoryInMemory implements UserRepository {
+    private long userIdCnt = 0;
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User add(User user) {
         if (user == null) return null;
-        return users.put(user.getId(), user);
+        user.setId(++userIdCnt);
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override
@@ -32,11 +32,19 @@ public class UserRepositoryInMemory implements UserRepository {
     public User save(User user) {
         if (user == null) return null;
         if (!users.containsKey(user.getId())) return null;
-        return users.replace(user.getId(), user);
+        users.replace(user.getId(), user);
+        return user;
     }
 
     @Override
     public void remove(Long id) {
         users.remove(id);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return users.values().stream()
+                .filter(user -> user.getEmail().equals(email))
+                .findFirst();
     }
 }
