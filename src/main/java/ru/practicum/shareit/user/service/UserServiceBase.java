@@ -59,7 +59,8 @@ public class UserServiceBase implements UserService {
         userRepository.remove(id);
     }
 
-    private User getUserOrThrow(Long id) {
+    @Override
+    public User getUserOrThrow(Long id) {
         return requireFound(userRepository.find(id), () -> "Пользователь с ID " + id + " не найден");
     }
 

@@ -19,6 +19,14 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
+    public User save(User user) {
+        if (user == null) return null;
+        if (!users.containsKey(user.getId())) return null;
+        users.replace(user.getId(), user);
+        return user;
+    }
+
+    @Override
     public Collection<User> findAll() {
         return users.values();
     }
@@ -29,14 +37,6 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
-        if (user == null) return null;
-        if (!users.containsKey(user.getId())) return null;
-        users.replace(user.getId(), user);
-        return user;
-    }
-
-    @Override
     public void remove(Long id) {
         users.remove(id);
     }
@@ -44,6 +44,7 @@ public class UserRepositoryInMemory implements UserRepository {
     @Override
     public Optional<User> findByEmail(String email) {
         return users.values().stream()
+                .filter(Objects::nonNull)
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
     }

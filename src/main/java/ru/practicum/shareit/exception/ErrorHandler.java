@@ -36,4 +36,10 @@ public class ErrorHandler {
     public ErrorResponse handleNotFoundEx(NotFoundException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbiddenEx(ForbiddenException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
 }

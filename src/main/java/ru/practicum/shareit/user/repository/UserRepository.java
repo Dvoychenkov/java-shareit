@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface UserRepository {
     User add(User user);
 
+    User save(User user);
+
     Collection<User> findAll();
 
     Optional<User> find(Long id);
-
-    User save(User user);
 
     void remove(Long id);
 
