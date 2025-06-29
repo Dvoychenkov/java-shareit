@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 @Repository
 
@@ -49,20 +50,26 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Collection<Item> searchItems(String nameSubstring, String descriptionSubstring, boolean isAvailable) {
-        boolean doNameSearch = StringUtils.isNotBlank(nameSubstring);
-        boolean doDescriptionSearch = StringUtils.isNotBlank(descriptionSubstring);
+        Predicate<Item> searchItemFilter = buildSearchItemFilter(nameSubstring, descriptionSubstring, isAvailable);
 
         return items.values().stream()
                 .filter(Objects::nonNull)
-                .filter(item -> {
-                    if (item.isAvailable() != isAvailable) {
-                        return false;
-                    }
-                    if (doNameSearch && StringUtils.containsIgnoreCase(item.getName(), nameSubstring)) {
-                        return true;
-                    }
-                    return doDescriptionSearch && StringUtils.containsIgnoreCase(item.getDescription(), descriptionSubstring);
-                })
+                .filter(searchItemFilter)
                 .toList();
+    }
+
+    private Predicate<Item> buildSearchItemFilter(String nameSubstring, String descriptionSubstring, boolean isAvailable) {
+        boolean doNameSearch = StringUtils.isNotBlank(nameSubstring);
+        boolean doDescriptionSearch = StringUtils.isNotBlank(descriptionSubstring);
+
+        return item -> {
+            if (item.isAvailable() != isAvailable) {
+                return false;
+            }
+            if (doNameSearch && StringUtils.containsIgnoreCase(item.getName(), nameSubstring)) {
+                return true;
+            }
+            return doDescriptionSearch && StringUtils.containsIgnoreCase(item.getDescription(), descriptionSubstring);
+        };
     }
 }
