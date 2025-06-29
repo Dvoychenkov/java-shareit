@@ -17,4 +17,6 @@ public interface UserRepository {
     void remove(Long id);
 
     Optional<User> findByEmail(String email);
+
+    boolean existsById(Long id);
 }

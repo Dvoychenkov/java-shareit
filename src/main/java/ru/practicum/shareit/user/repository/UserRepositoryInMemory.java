@@ -54,4 +54,9 @@ public class UserRepositoryInMemory implements UserRepository {
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst();
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        return users.containsKey(id);
+    }
 }

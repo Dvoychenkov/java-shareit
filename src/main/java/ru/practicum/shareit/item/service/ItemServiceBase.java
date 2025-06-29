@@ -24,7 +24,7 @@ public class ItemServiceBase implements ItemService {
 
     @Override
     public ItemDto add(NewItemDto newItemDto, Long ownerId) {
-        userService.getUserOrThrow(ownerId);
+        userService.existsByIdOrThrow(ownerId);
         Item itemToCreate = itemMapper.toItem(newItemDto);
         itemToCreate.setOwner(ownerId);
 
@@ -34,7 +34,7 @@ public class ItemServiceBase implements ItemService {
 
     @Override
     public ItemDto save(Long id, UpdateItemDto updateItemDto, Long ownerId) {
-        userService.getUserOrThrow(ownerId);
+        userService.existsByIdOrThrow(ownerId);
         Item itemToSave = getItemOrThrow(id);
         if (!itemToSave.getOwner().equals(ownerId)) {
             throw new ForbiddenException("Редактировать вещь может только её владелец");
@@ -53,7 +53,7 @@ public class ItemServiceBase implements ItemService {
 
     @Override
     public Collection<ItemDto> findAllByOwnerId(Long ownerId) {
-        userService.getUserOrThrow(ownerId);
+        userService.existsByIdOrThrow(ownerId);
 
         Collection<Item> ownerItems = itemRepository.findAllByOwnerId(ownerId);
         return ownerItems.stream()

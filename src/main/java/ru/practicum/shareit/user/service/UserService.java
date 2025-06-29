@@ -19,4 +19,6 @@ public interface UserService {
     void remove(Long id);
 
     User getUserOrThrow(Long id);
+
+    void existsByIdOrThrow(Long id);
 }

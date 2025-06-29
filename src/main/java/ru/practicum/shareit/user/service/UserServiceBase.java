@@ -13,6 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.util.Collection;
 import java.util.Optional;
 
+import static ru.practicum.shareit.utils.ValidationUtils.requireExists;
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 
 @Service
@@ -20,6 +21,7 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 public class UserServiceBase implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private static final String USER_BY_ID_NOT_EXISTS = "Пользователь с ID %d не найден";
 
     @Override
     public UserDto add(NewUserDto newUserDto) {
@@ -56,13 +58,18 @@ public class UserServiceBase implements UserService {
 
     @Override
     public void remove(Long id) {
-        getUserOrThrow(id);
+        existsByIdOrThrow(id);
         userRepository.remove(id);
     }
 
     @Override
     public User getUserOrThrow(Long id) {
-        return requireFound(userRepository.find(id), () -> "Пользователь с ID " + id + " не найден");
+        return requireFound(userRepository.find(id), () -> String.format(USER_BY_ID_NOT_EXISTS, id));
+    }
+
+    @Override
+    public void existsByIdOrThrow(Long id) {
+        requireExists(userRepository.existsById(id), () -> String.format(USER_BY_ID_NOT_EXISTS, id));
     }
 
     private void validateEmailUniqueness(String currentUserEmail, Long currentUserId) {
