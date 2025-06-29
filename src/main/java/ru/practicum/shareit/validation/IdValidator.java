@@ -13,7 +13,9 @@ public class IdValidator implements ConstraintValidator<IdValid, Long> {
 
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {
-        if (value != null) return true;
+        if (value != null) {
+            return true;
+        }
 
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(paramName + " не может быть null").addConstraintViolation();

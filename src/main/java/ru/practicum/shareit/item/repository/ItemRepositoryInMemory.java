@@ -13,7 +13,9 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Item add(Item item) {
-        if (item == null) return null;
+        if (item == null) {
+            return null;
+        }
         item.setId(++itemIdCnt);
         items.put(item.getId(), item);
         return item;
@@ -21,8 +23,12 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Item save(Item item) {
-        if (item == null) return null;
-        if (!items.containsKey(item.getId())) return null;
+        if (item == null) {
+            return null;
+        }
+        if (!items.containsKey(item.getId())) {
+            return null;
+        }
         items.replace(item.getId(), item);
         return item;
     }
@@ -48,7 +54,9 @@ public class ItemRepositoryInMemory implements ItemRepository {
         return items.values().stream()
                 .filter(Objects::nonNull)
                 .filter(item -> {
-                    if (item.isAvailable() != isAvailable) return false;
+                    if (item.isAvailable() != isAvailable) {
+                        return false;
+                    }
                     if (doNameSearch) {
                         String itemName = item.getName();
                         if (itemName != null && itemName.toLowerCase().contains(nameSubstring.toLowerCase())) {

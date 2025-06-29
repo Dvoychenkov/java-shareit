@@ -12,7 +12,9 @@ public class UserRepositoryInMemory implements UserRepository {
 
     @Override
     public User add(User user) {
-        if (user == null) return null;
+        if (user == null) {
+            return null;
+        }
         user.setId(++userIdCnt);
         users.put(user.getId(), user);
         return user;
@@ -20,8 +22,12 @@ public class UserRepositoryInMemory implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user == null) return null;
-        if (!users.containsKey(user.getId())) return null;
+        if (user == null) {
+            return null;
+        }
+        if (!users.containsKey(user.getId())) {
+            return null;
+        }
         users.replace(user.getId(), user);
         return user;
     }
