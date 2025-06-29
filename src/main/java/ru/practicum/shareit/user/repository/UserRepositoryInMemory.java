@@ -34,7 +34,7 @@ public class UserRepositoryInMemory implements UserRepository {
 
     @Override
     public Collection<User> findAll() {
-        return users.values();
+        return Collections.unmodifiableCollection(new ArrayList<>(users.values()));
     }
 
     @Override
