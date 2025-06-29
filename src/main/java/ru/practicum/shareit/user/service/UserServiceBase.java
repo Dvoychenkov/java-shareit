@@ -19,28 +19,29 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 @AllArgsConstructor
 public class UserServiceBase implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto add(NewUserDto newUserDto) {
         validateEmailUniqueness(newUserDto.getEmail(), null);
-        User userToCreate = UserMapper.toUser(newUserDto);
+        User userToCreate = userMapper.toUser(newUserDto);
 
         User createdUser = userRepository.add(userToCreate);
-        return UserMapper.toUserDto(createdUser);
+        return userMapper.toUserDto(createdUser);
     }
 
     @Override
     public Collection<UserDto> findAll() {
         Collection<User> users = userRepository.findAll();
         return users.stream()
-                .map(UserMapper::toUserDto)
+                .map(userMapper::toUserDto)
                 .toList();
     }
 
     @Override
     public UserDto find(Long id) {
         User user = getUserOrThrow(id);
-        return UserMapper.toUserDto(user);
+        return userMapper.toUserDto(user);
     }
 
     @Override
@@ -48,9 +49,9 @@ public class UserServiceBase implements UserService {
         validateEmailUniqueness(updateUserDto.getEmail(), id);
         User userToSave = getUserOrThrow(id);
 
-        UserMapper.updateUser(userToSave, updateUserDto);
+        userMapper.updateUser(updateUserDto, userToSave);
         User savedUser = userRepository.save(userToSave);
-        return UserMapper.toUserDto(savedUser);
+        return userMapper.toUserDto(savedUser);
     }
 
     @Override

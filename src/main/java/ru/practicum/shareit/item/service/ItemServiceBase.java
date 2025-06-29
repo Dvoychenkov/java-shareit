@@ -20,15 +20,16 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 public class ItemServiceBase implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
+    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto add(NewItemDto newItemDto, Long ownerId) {
         userService.getUserOrThrow(ownerId);
-        Item itemToCreate = ItemMapper.toItem(newItemDto);
+        Item itemToCreate = itemMapper.toItem(newItemDto);
         itemToCreate.setOwner(ownerId);
 
         Item createdItem = itemRepository.add(itemToCreate);
-        return ItemMapper.toItemDto(createdItem);
+        return itemMapper.toItemDto(createdItem);
     }
 
     @Override
@@ -39,15 +40,15 @@ public class ItemServiceBase implements ItemService {
             throw new ForbiddenException("Редактировать вещь может только её владелец");
         }
 
-        ItemMapper.updateItem(itemToSave, updateItemDto);
+        itemMapper.updateItem(updateItemDto, itemToSave);
         Item savedItem = itemRepository.save(itemToSave);
-        return ItemMapper.toItemDto(savedItem);
+        return itemMapper.toItemDto(savedItem);
     }
 
     @Override
     public ItemDto find(Long id) {
         Item item = getItemOrThrow(id);
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toItemDto(item);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class ItemServiceBase implements ItemService {
 
         Collection<Item> ownerItems = itemRepository.findAllByOwnerId(ownerId);
         return ownerItems.stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .toList();
     }
 
@@ -64,7 +65,7 @@ public class ItemServiceBase implements ItemService {
     public Collection<ItemDto> searchAvailableItems(String searchText) {
         Collection<Item> itemsSearchResult = itemRepository.searchItems(searchText, searchText, true);
         return itemsSearchResult.stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .toList();
     }
 
