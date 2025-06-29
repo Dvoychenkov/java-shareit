@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
@@ -48,8 +49,8 @@ public class ItemRepositoryInMemory implements ItemRepository {
 
     @Override
     public Collection<Item> searchItems(String nameSubstring, String descriptionSubstring, boolean isAvailable) {
-        boolean doNameSearch = nameSubstring != null && !nameSubstring.isBlank();
-        boolean doDescriptionSearch = descriptionSubstring != null && !descriptionSubstring.isBlank();
+        boolean doNameSearch = StringUtils.isNotBlank(nameSubstring);
+        boolean doDescriptionSearch = StringUtils.isNotBlank(descriptionSubstring);
 
         return items.values().stream()
                 .filter(Objects::nonNull)
@@ -57,17 +58,10 @@ public class ItemRepositoryInMemory implements ItemRepository {
                     if (item.isAvailable() != isAvailable) {
                         return false;
                     }
-                    if (doNameSearch) {
-                        String itemName = item.getName();
-                        if (itemName != null && itemName.toLowerCase().contains(nameSubstring.toLowerCase())) {
-                            return true;
-                        }
+                    if (doNameSearch && StringUtils.containsIgnoreCase(item.getName(), nameSubstring)) {
+                        return true;
                     }
-                    if (doDescriptionSearch) {
-                        String itemDesc = item.getDescription();
-                        return itemDesc != null && itemDesc.toLowerCase().contains(descriptionSubstring.toLowerCase());
-                    }
-                    return false;
+                    return doDescriptionSearch && StringUtils.containsIgnoreCase(item.getDescription(), descriptionSubstring);
                 })
                 .toList();
     }
