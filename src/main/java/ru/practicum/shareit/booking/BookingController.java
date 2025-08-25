@@ -1,12 +1,60 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.NewBookingDto;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.validation.IdValid;
 
-/**
- * TODO Sprint add-bookings.
- */
+import java.util.List;
+
 @RestController
-@RequestMapping(path = "/bookings")
+@RequestMapping("/bookings")
+@RequiredArgsConstructor
 public class BookingController {
+
+    private final BookingService bookingService;
+
+    @PostMapping
+    public BookingDto create(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
+            @Valid @RequestBody NewBookingDto dto
+    ) {
+        return bookingService.create(userId, dto);
+    }
+
+    @PatchMapping("/{bookingId}")
+    public BookingDto approve(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @IdValid("bookingId") @PathVariable Long bookingId,
+            @RequestParam("approved") boolean approved
+    ) {
+        return bookingService.approve(ownerId, bookingId, approved);
+    }
+
+    @GetMapping("/{bookingId}")
+    public BookingDto get(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
+            @IdValid("bookingId") @PathVariable Long bookingId
+    ) {
+        return bookingService.get(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingDto> byBooker(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(value = "state", defaultValue = "ALL") String state
+    ) {
+        return bookingService.getByBooker(userId, state);
+    }
+
+    @GetMapping("/owner")
+    public List<BookingDto> byOwner(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestParam(value = "state", defaultValue = "ALL") String state
+    ) {
+        return bookingService.getByOwner(ownerId, state);
+    }
 }
