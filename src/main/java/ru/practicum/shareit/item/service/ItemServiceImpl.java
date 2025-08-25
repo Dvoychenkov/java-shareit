@@ -20,7 +20,7 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
-public class ItemServiceBase implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final UserService userService;

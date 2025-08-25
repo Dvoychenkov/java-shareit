@@ -19,7 +19,7 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
-public class UserServiceBase implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
