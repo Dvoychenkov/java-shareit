@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     /*
-        Запросы по бронирующему
+        Запросы по поиску информации о вещах букером
     */
     @EntityGraph(attributePaths = {"item", "booker"})
     List<Booking> findByBooker_IdOrderByStartDesc(Long bookerId);
@@ -45,7 +45,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                                   LocalDateTime now);
 
     /*
-        Запросы по владельцу вещи
+        Запрос проверки вещи на историю бронирования
+    */
+    boolean existsByBooker_IdAndItem_IdAndStatusAndEndBefore(Long userId,
+                                                             Long itemId,
+                                                             BookingStatus status,
+                                                             LocalDateTime now);
+
+
+    /*
+        Запросы по поиску информации о вещах владельцем
     */
     @Query("""
             select b

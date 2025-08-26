@@ -6,18 +6,19 @@ import org.mapstruct.MappingConstants;
 import ru.practicum.shareit.booking.dto.BookingTimeDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.Optional;
+import java.util.List;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = CommentMapper.class)
 public interface ItemWithBookingsMapper {
 
     @Mapping(target = "id", source = "item.id")
-    ItemWithBookingsDto toDto(Item item, Booking lastBooking, Booking nextBooking);
+    ItemWithBookingsDto toItemWithBookingsDto(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments);
 
-    default ItemWithBookingsDto toDto(Item item, Optional<Booking> lastBooking, Optional<Booking> nextBooking) {
-        return toDto(item, lastBooking.orElse(null), nextBooking.orElse(null));
+    default ItemWithBookingsDto toItemWithBookingsDto(Item item, List<Comment> comments) {
+        return toItemWithBookingsDto(item, null, null, comments);
     }
 
     default BookingTimeDto map(Booking b) {

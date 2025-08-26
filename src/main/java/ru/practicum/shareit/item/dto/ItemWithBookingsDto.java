@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.dto;
 import lombok.Value;
 import ru.practicum.shareit.booking.dto.BookingTimeDto;
 
+import java.util.List;
+
 @Value
 public class ItemWithBookingsDto {
     Long id;
@@ -11,4 +13,5 @@ public class ItemWithBookingsDto {
     boolean available;
     BookingTimeDto lastBooking;
     BookingTimeDto nextBooking;
+    List<CommentDto> comments;
 }
