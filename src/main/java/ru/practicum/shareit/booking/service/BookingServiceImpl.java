@@ -102,10 +102,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDto> getByBooker(Long userId, String stateRaw) {
+    public Collection<BookingDto> getByBooker(Long userId, BookingState state) {
         userService.existsByIdOrThrow(userId);
-
-        BookingState state = BookingState.from(stateRaw);
         LocalDateTime now = LocalDateTime.now();
 
         Collection<Booking> result = switch (state) {
@@ -123,10 +121,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDto> getByOwner(Long ownerId, String stateRaw) {
+    public Collection<BookingDto> getByOwner(Long ownerId, BookingState state) {
         userService.existsByIdOrThrow(ownerId);
-
-        BookingState state = BookingState.from(stateRaw);
         LocalDateTime now = LocalDateTime.now();
 
         Collection<Booking> result = switch (state) {
