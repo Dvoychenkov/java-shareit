@@ -36,7 +36,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
     private static final String MSG_BOOKING_BY_ID_NOT_EXISTS = "Бронирование с ID %d не найдено";
-    private static final String MSG_BOOKING_INTERVAL_INCORRECT = "Некорректный интервал бронирования: %s - %s";
     private static final String MSG_OWNER_CANT_BOOK_OWN_ITEM = "Владелец не может бронировать свою вещь";
     private static final String MSG_ITEM_NOT_AVAILABLE = "Вещь недоступна для бронирования";
     private static final String MSG_ONLY_ITEM_OWNER_CAN_MAKE_DECISION = "Только владелец вещи может принять решение";
@@ -48,11 +47,6 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto create(Long userId, NewBookingDto dto) {
         Item item = itemService.getItemOrThrow(dto.getItemId());
         User booker = userService.getUserOrThrow(userId);
-
-        if (dto.getStart() == null || dto.getEnd() == null || !dto.getStart().isBefore(dto.getEnd())) {
-            throw new IllegalArgumentException(
-                    String.format(MSG_BOOKING_INTERVAL_INCORRECT, dto.getStart(), dto.getEnd()));
-        }
 
         if (item.getOwner().equals(userId)) {
             throw new ForbiddenException(MSG_OWNER_CANT_BOOK_OWN_ITEM);
