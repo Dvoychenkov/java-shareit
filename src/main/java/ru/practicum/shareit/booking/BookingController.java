@@ -10,7 +10,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validation.IdValid;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")

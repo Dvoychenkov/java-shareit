@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -22,8 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @EntityGraph(attributePaths = {"item", "booker"})
     Collection<Booking> findByBooker_IdAndStartLessThanEqualAndEndGreaterThanEqualOrderByStartDesc(Long bookerId,
-                                                                                             LocalDateTime start,
-                                                                                             LocalDateTime end);
+                                                                                                   LocalDateTime start,
+                                                                                                   LocalDateTime end);
 
     @EntityGraph(attributePaths = {"item", "booker"})
     Collection<Booking> findByBooker_IdAndEndLessThanOrderByStartDesc(Long bookerId, LocalDateTime end);
@@ -78,7 +77,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             order by b.start desc
             """)
     Collection<Booking> findCurrentByOwner(@Param("ownerId") Long ownerId,
-                                     @Param("now") LocalDateTime now);
+                                           @Param("now") LocalDateTime now);
 
     @Query("""
             select b
@@ -90,7 +89,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             order by b.start desc
             """)
     Collection<Booking> findPastByOwner(@Param("ownerId") Long ownerId,
-                                  @Param("now") LocalDateTime now);
+                                        @Param("now") LocalDateTime now);
 
     @Query("""
             select b
@@ -102,7 +101,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             order by b.start desc
             """)
     Collection<Booking> findFutureByOwner(@Param("ownerId") Long ownerId,
-                                    @Param("now") LocalDateTime now);
+                                          @Param("now") LocalDateTime now);
 
     @Query("""
             select b
@@ -114,5 +113,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             order by b.start desc
             """)
     Collection<Booking> findByOwnerAndStatus(@Param("ownerId") Long ownerId,
-                                       @Param("status") BookingStatus status);
+                                             @Param("status") BookingStatus status);
 }
