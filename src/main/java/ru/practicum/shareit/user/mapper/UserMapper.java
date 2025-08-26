@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.mapper;
 
 import org.mapstruct.*;
 import ru.practicum.shareit.user.dto.NewUserDto;

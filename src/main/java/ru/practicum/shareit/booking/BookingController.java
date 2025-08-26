@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.validation.IdValid;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -20,9 +21,9 @@ public class BookingController {
     @PostMapping
     public BookingDto create(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
-            @Valid @RequestBody NewBookingDto dto
+            @Valid @RequestBody NewBookingDto newBookingDto
     ) {
-        return bookingService.create(userId, dto);
+        return bookingService.create(userId, newBookingDto);
     }
 
     @PatchMapping("/{bookingId}")
@@ -43,7 +44,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingDto> byBooker(
+    public Collection<BookingDto> byBooker(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(value = "state", defaultValue = "ALL") String state
     ) {
@@ -51,7 +52,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> byOwner(
+    public Collection<BookingDto> byOwner(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @RequestParam(value = "state", defaultValue = "ALL") String state
     ) {

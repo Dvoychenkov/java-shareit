@@ -8,9 +8,9 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.CommentMapper;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.ItemWithBookingsMapper;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.mapper.ItemWithBookingsMapper;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
@@ -96,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemWithBookingsDto find(Long id) {
         Item item = getItemOrThrow(id);
 
-        List<Comment> comments = commentRepository.findAllByItem_IdOrderByCreatedDesc(id);
+        Collection<Comment> comments = commentRepository.findAllByItem_IdOrderByCreatedDesc(id);
         return itemWithBookingsMapper.toItemWithBookingsDto(item, comments);
     }
 
@@ -104,7 +103,7 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemWithBookingsDto> findAllWithBookingsByOwnerId(Long ownerId) {
         userService.existsByIdOrThrow(ownerId);
 
-        List<Item> items = itemRepository.findAllByOwner(ownerId);
+        Collection<Item> items = itemRepository.findAllByOwner(ownerId);
         if (items.isEmpty()) {
             return List.of();
         }
@@ -112,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
         List<Long> itemIds = items.stream()
                 .map(Item::getId)
                 .toList();
-        List<Comment> comments = commentRepository.findAllByItem_IdInOrderByCreatedDesc(itemIds);
+        Collection<Comment> comments = commentRepository.findAllByItem_IdInOrderByCreatedDesc(itemIds);
         Map<Long, List<Comment>> commentsByItem = comments.stream()
                 .collect(Collectors.groupingBy(c -> c.getItem().getId()));
 

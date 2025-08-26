@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingMapper;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -18,6 +18,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
@@ -28,8 +29,10 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
+
     private final UserService userService;
     private final ItemService itemService;
+
     private final BookingMapper bookingMapper;
 
     private static final String MSG_BOOKING_BY_ID_NOT_EXISTS = "Бронирование с ID %d не найдено";
@@ -99,13 +102,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getByBooker(Long userId, String stateRaw) {
+    public Collection<BookingDto> getByBooker(Long userId, String stateRaw) {
         userService.existsByIdOrThrow(userId);
 
         BookingState state = BookingState.from(stateRaw);
         LocalDateTime now = LocalDateTime.now();
 
-        List<Booking> result = switch (state) {
+        Collection<Booking> result = switch (state) {
             case ALL -> bookingRepository.findByBooker_IdOrderByStartDesc(userId);
             case CURRENT ->
                     bookingRepository.findByBooker_IdAndStartLessThanEqualAndEndGreaterThanEqualOrderByStartDesc(userId, now, now);
@@ -120,13 +123,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getByOwner(Long ownerId, String stateRaw) {
+    public Collection<BookingDto> getByOwner(Long ownerId, String stateRaw) {
         userService.existsByIdOrThrow(ownerId);
 
         BookingState state = BookingState.from(stateRaw);
         LocalDateTime now = LocalDateTime.now();
 
-        List<Booking> result = switch (state) {
+        Collection<Booking> result = switch (state) {
             case ALL -> bookingRepository.findAllByOwner(ownerId);
             case CURRENT -> bookingRepository.findCurrentByOwner(ownerId, now);
             case PAST -> bookingRepository.findPastByOwner(ownerId, now);

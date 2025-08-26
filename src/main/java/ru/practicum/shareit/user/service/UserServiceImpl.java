@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateException;
-import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.NewUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -22,6 +22,7 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
     private final UserMapper userMapper;
 
     private static final String MSG_USER_BY_ID_NOT_EXISTS = "Пользователь с ID %d не найден";
