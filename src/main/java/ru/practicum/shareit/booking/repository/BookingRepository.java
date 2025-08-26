@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
@@ -31,6 +32,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @EntityGraph(attributePaths = {"item", "booker"})
     List<Booking> findByBooker_IdAndStatusOrderByStartDesc(Long bookerId, BookingStatus status);
+
+    /*
+        Запросы по статусу и времени бронирования
+    */
+    Optional<Booking> findTopByItem_IdAndStatusAndStartLessThanEqualOrderByStartDesc(Long itemId,
+                                                                                     BookingStatus status,
+                                                                                     LocalDateTime now);
+
+    Optional<Booking> findTopByItem_IdAndStatusAndStartGreaterThanOrderByStartAsc(Long itemId,
+                                                                                  BookingStatus status,
+                                                                                  LocalDateTime now);
 
     /*
         Запросы по владельцу вещи

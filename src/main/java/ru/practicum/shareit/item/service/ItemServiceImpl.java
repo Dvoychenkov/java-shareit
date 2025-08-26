@@ -3,17 +3,24 @@ package ru.practicum.shareit.item.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.item.ItemWithBookingsMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 
@@ -23,8 +30,10 @@ import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
+    private final ItemWithBookingsMapper itemWithBookingsMapper;
 
     private static final String MSG_ITEM_BY_ID_NOT_EXISTS = "Вещь с ID %d не найдена";
     private static final String MSG_INCORRECT_ITEM_OWNER = "Пользователь с ID %d не является владельцем вещи";
@@ -61,12 +70,26 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> findAllByOwnerId(Long ownerId) {
+    public Collection<ItemWithBookingsDto> findAllWithBookingsByOwnerId(Long ownerId) {
         userService.existsByIdOrThrow(ownerId);
 
-        Collection<Item> ownerItems = itemRepository.findAllByOwner(ownerId);
-        return ownerItems.stream()
-                .map(itemMapper::toItemDto)
+        List<Item> items = itemRepository.findAllByOwner(ownerId);
+        LocalDateTime now = LocalDateTime.now();
+
+        return items.stream()
+                .map(item -> itemWithBookingsMapper.toDto(
+                        item,
+                        bookingRepository.findTopByItem_IdAndStatusAndStartLessThanEqualOrderByStartDesc(
+                                item.getId(),
+                                BookingStatus.APPROVED,
+                                now
+                        ),
+                        bookingRepository.findTopByItem_IdAndStatusAndStartGreaterThanOrderByStartAsc(
+                                item.getId(),
+                                BookingStatus.APPROVED,
+                                now
+                        )
+                ))
                 .toList();
     }
 
@@ -86,4 +109,5 @@ public class ItemServiceImpl implements ItemService {
     public Item getItemOrThrow(Long id) {
         return requireFound(itemRepository.findById(id), () -> String.format(MSG_ITEM_BY_ID_NOT_EXISTS, id));
     }
+
 }

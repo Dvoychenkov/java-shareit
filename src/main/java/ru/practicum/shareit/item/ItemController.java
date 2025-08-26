@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.dto.NewItemDto;
 import ru.practicum.shareit.item.dto.UpdateItemDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -43,10 +44,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<ItemDto> getAllItemsOfOwner(
-            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId
+    public Collection<ItemWithBookingsDto> getAllItemsOfOwner(
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerID
     ) {
-        return itemService.findAllByOwnerId(userId);
+        return itemService.findAllWithBookingsByOwnerId(ownerID);
     }
 
     @GetMapping("/search")

@@ -102,8 +102,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getByBooker(Long userId, String stateRaw) {
         userService.existsByIdOrThrow(userId);
 
-        var state = BookingState.from(stateRaw);
-        var now = LocalDateTime.now();
+        BookingState state = BookingState.from(stateRaw);
+        LocalDateTime now = LocalDateTime.now();
 
         List<Booking> result = switch (state) {
             case ALL -> bookingRepository.findByBooker_IdOrderByStartDesc(userId);
@@ -123,8 +123,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getByOwner(Long ownerId, String stateRaw) {
         userService.existsByIdOrThrow(ownerId);
 
-        var state = BookingState.from(stateRaw);
-        var now = LocalDateTime.now();
+        BookingState state = BookingState.from(stateRaw);
+        LocalDateTime now = LocalDateTime.now();
 
         List<Booking> result = switch (state) {
             case ALL -> bookingRepository.findAllByOwner(ownerId);
