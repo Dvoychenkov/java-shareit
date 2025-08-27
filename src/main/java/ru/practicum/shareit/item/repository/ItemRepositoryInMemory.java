@@ -1,19 +1,15 @@
 package ru.practicum.shareit.item.repository;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-@Repository
-
-public class ItemRepositoryInMemory implements ItemRepository {
+public class ItemRepositoryInMemory {
     private long itemIdCnt = 0;
     private final Map<Long, Item> items = new HashMap<>();
 
-    @Override
     public Item add(Item item) {
         if (item == null) {
             return null;
@@ -23,7 +19,6 @@ public class ItemRepositoryInMemory implements ItemRepository {
         return item;
     }
 
-    @Override
     public Item save(Item item) {
         if (item == null) {
             return null;
@@ -35,12 +30,10 @@ public class ItemRepositoryInMemory implements ItemRepository {
         return item;
     }
 
-    @Override
     public Optional<Item> find(Long id) {
         return Optional.ofNullable(items.get(id));
     }
 
-    @Override
     public Collection<Item> findAllByOwnerId(Long ownerId) {
         return items.values().stream()
                 .filter(Objects::nonNull)
@@ -48,7 +41,6 @@ public class ItemRepositoryInMemory implements ItemRepository {
                 .toList();
     }
 
-    @Override
     public Collection<Item> searchItems(String nameSubstring, String descriptionSubstring, boolean isAvailable) {
         Predicate<Item> searchItemFilter = buildSearchItemFilter(nameSubstring, descriptionSubstring, isAvailable);
 

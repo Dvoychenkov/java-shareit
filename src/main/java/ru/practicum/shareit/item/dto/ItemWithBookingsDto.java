@@ -1,14 +1,17 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Value;
+import ru.practicum.shareit.booking.dto.BookingTimeDto;
 
 import java.util.List;
 
 @Value
-public class ItemDto {
+public class ItemWithBookingsDto {
     Long id;
     String name;
     String description;
     boolean available;
+    BookingTimeDto lastBooking;
+    BookingTimeDto nextBooking;
     List<CommentDto> comments;
 }

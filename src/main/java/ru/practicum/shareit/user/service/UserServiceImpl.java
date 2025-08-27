@@ -2,8 +2,9 @@ package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateException;
-import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.NewUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -11,24 +12,33 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import static ru.practicum.shareit.utils.ValidationUtils.requireExists;
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 
 @Service
 @AllArgsConstructor
-public class UserServiceBase implements UserService {
+@Transactional(readOnly = true)
+public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
+
     private final UserMapper userMapper;
-    private static final String USER_BY_ID_NOT_EXISTS = "Пользователь с ID %d не найден";
+
+    private static final String MSG_USER_BY_ID_NOT_EXISTS = "Пользователь с ID %d не найден";
+    private static final String MSG_USER_EMAIL_DUPLICATE = "Пользователь с email %s уже существует";
+    private static final String MSG_USER_EMAIL_IS_BLANK = "Email не должен быть пустым";
 
     @Override
+    @Transactional
     public UserDto add(NewUserDto newUserDto) {
-        validateEmailUniqueness(newUserDto.getEmail(), null);
+        if (newUserDto.getEmail() == null || newUserDto.getEmail().isBlank()) {
+            throw new IllegalArgumentException(MSG_USER_EMAIL_IS_BLANK);
+        }
+        validateEmailUniqueness(newUserDto.getEmail());
         User userToCreate = userMapper.toUser(newUserDto);
 
-        User createdUser = userRepository.add(userToCreate);
+        User createdUser = userRepository.save(userToCreate);
         return userMapper.toUserDto(createdUser);
     }
 
@@ -47,8 +57,9 @@ public class UserServiceBase implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto save(Long id, UpdateUserDto updateUserDto) {
-        validateEmailUniqueness(updateUserDto.getEmail(), id);
+        validateEmailUniqueness(updateUserDto.getEmail());
         User userToSave = getUserOrThrow(id);
 
         userMapper.updateUser(updateUserDto, userToSave);
@@ -57,25 +68,29 @@ public class UserServiceBase implements UserService {
     }
 
     @Override
+    @Transactional
     public void remove(Long id) {
         existsByIdOrThrow(id);
-        userRepository.remove(id);
+        userRepository.deleteById(id);
     }
 
     @Override
     public User getUserOrThrow(Long id) {
-        return requireFound(userRepository.find(id), () -> String.format(USER_BY_ID_NOT_EXISTS, id));
+        return requireFound(userRepository.findById(id), () -> String.format(MSG_USER_BY_ID_NOT_EXISTS, id));
     }
 
     @Override
     public void existsByIdOrThrow(Long id) {
-        requireExists(userRepository.existsById(id), () -> String.format(USER_BY_ID_NOT_EXISTS, id));
+        requireExists(userRepository.existsById(id), () -> String.format(MSG_USER_BY_ID_NOT_EXISTS, id));
     }
 
-    private void validateEmailUniqueness(String currentUserEmail, Long currentUserId) {
-        Optional<User> existingUser = userRepository.findByEmail(currentUserEmail);
-        if (existingUser.isPresent() && !existingUser.get().getId().equals(currentUserId)) {
-            throw new DuplicateException("Пользователь с таким email уже существует");
+    private void validateEmailUniqueness(String currentUserEmail) {
+        if (currentUserEmail == null || currentUserEmail.isBlank()) {
+            return;
+        }
+
+        if (userRepository.existsByEmail(currentUserEmail)) {
+            throw new DuplicateException(String.format(MSG_USER_EMAIL_DUPLICATE, currentUserEmail));
         }
     }
 }
