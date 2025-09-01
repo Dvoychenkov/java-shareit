@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @ValidBookingInterval
 public class NewBookingDto {
     @NotNull
-            // @FutureOrPresent
     LocalDateTime start;
 
     @NotNull

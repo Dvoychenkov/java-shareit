@@ -10,14 +10,16 @@ import ru.practicum.shareit.utils.ConvertersHelper;
 public class StringToBookingStateConverter implements Converter<String, BookingState> {
     @Override
     public BookingState convert(String source) {
-        if (source == null || source.isBlank()) return BookingState.ALL;
+        if (source == null || source.isBlank()) {
+            return BookingState.ALL;
+        }
+
         try {
             return BookingState.valueOf(source.trim().toUpperCase());
         } catch (IllegalArgumentException ex) {
             throw new ValidationException(
-                    "Недопустимое значение параметра 'state': " + source
-                            + ". Ожидаются значения из списка: "
-                            + ConvertersHelper.getEnumNamesFormatted(BookingState.class)
+                    String.format("Недопустимое значение параметра 'state': %s. Ожидаются значения из списка: %s",
+                            source, ConvertersHelper.getEnumNamesFormatted(BookingState.class))
             );
         }
     }
