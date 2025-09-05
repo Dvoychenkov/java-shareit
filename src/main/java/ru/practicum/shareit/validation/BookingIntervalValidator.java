@@ -4,15 +4,17 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import ru.practicum.shareit.booking.dto.NewBookingDto;
 
+import java.time.LocalDateTime;
+
 public class BookingIntervalValidator implements ConstraintValidator<ValidBookingInterval, NewBookingDto> {
 
     @Override
-    public boolean isValid(NewBookingDto dto, ConstraintValidatorContext ctx) {
-        if (dto == null) {
+    public boolean isValid(NewBookingDto newBookingDto, ConstraintValidatorContext ctx) {
+        if (newBookingDto == null) {
             return true;
         }
-        var start = dto.getStart();
-        var end = dto.getEnd();
+        LocalDateTime start = newBookingDto.getStart();
+        LocalDateTime end = newBookingDto.getEnd();
 
         if (start == null || end == null) {
             ctx.disableDefaultConstraintViolation();

@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 public class NewCommentDto {
-    @NotBlank
+    @NotBlank(message = "Пустой текст комментария")
     String text;
 
     @JsonCreator
