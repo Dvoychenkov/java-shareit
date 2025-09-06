@@ -14,4 +14,6 @@ public class NewItemDto {
 
     @NotNull(message = "Пустой признак доступности")
     Boolean available;
+
+    Long requestId;
 }

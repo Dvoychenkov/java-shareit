@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.utils.ValidationUtils.requireExists;
 import static ru.practicum.shareit.utils.ValidationUtils.requireFound;
 
 @Service
@@ -78,6 +79,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequest getItemRequestOrThrow(Long id) {
         return requireFound(itemRequestRepository.findById(id), () -> String.format(MSG_REQUEST_BY_ID_NOT_EXISTS, id));
+    }
+
+    @Override
+    public void existsByIdOrThrow(Long id) {
+        requireExists(itemRequestRepository.existsById(id), () -> String.format(MSG_REQUEST_BY_ID_NOT_EXISTS, id));
     }
 
     private Map<ItemRequest, Collection<Item>> collectAnswersForRequests(Collection<ItemRequest> requests) {

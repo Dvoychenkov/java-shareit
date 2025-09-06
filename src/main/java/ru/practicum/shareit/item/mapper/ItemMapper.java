@@ -12,6 +12,7 @@ import java.util.Collection;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ItemMapper {
 
+    @Mapping(target = "request", source = "requestId")
     Item toItem(NewItemDto newItemDto);
 
     ItemDto toItemDto(Item item);

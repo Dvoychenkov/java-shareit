@@ -8,14 +8,15 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.mapper.ItemWithBookingsMapper;
-import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -35,6 +36,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestService itemRequestService;
 
     private final UserService userService;
 
@@ -50,6 +52,10 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto add(NewItemDto newItemDto, Long ownerId) {
         userService.existsByIdOrThrow(ownerId);
+        if (newItemDto.getRequestId() != null) {
+            itemRequestService.existsByIdOrThrow(newItemDto.getRequestId());
+        }
+
         Item itemToCreate = itemMapper.toItem(newItemDto);
         itemToCreate.setOwner(ownerId);
 
