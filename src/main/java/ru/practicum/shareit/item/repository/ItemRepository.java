@@ -22,4 +22,11 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Collection<Item> search(@Param("nameText") String nameText,
                             @Param("descText") String descText,
                             @Param("isAvailable") boolean isAvailable);
+
+    /*
+        Запросы по поиску информации по запросам вещей
+    */
+    Collection<Item> findAllByRequest(Long requestId);
+
+    Collection<Item> findAllByRequestIn(Collection<Long> requestIds);
 }

@@ -2,12 +2,10 @@ package ru.practicum.shareit.request.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,8 +22,9 @@ public class ItemRequest {
     @Column(nullable = false)
     private String description;
 
-    @Column(name = "requestor_id", nullable = false)
-    private Long requestor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requestor_id", nullable = false)
+    private User requestor;
 
     @Column(nullable = false)
     private LocalDateTime created;
