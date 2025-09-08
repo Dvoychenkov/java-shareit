@@ -3,11 +3,14 @@ package ru.practicum.shareit.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.user.dto.NewUserDto;
 import ru.practicum.shareit.user.dto.UpdateUserDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.validation.IdValid;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
@@ -36,5 +39,10 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void removeUser(@IdValid("userId") @PathVariable Long userId) {
         userService.remove(userId);
+    }
+
+    @GetMapping
+    public Collection<UserDto> getAllUsers() {
+        return userService.findAll();
     }
 }

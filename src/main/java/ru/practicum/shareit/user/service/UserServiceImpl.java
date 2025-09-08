@@ -27,14 +27,10 @@ public class UserServiceImpl implements UserService {
 
     private static final String MSG_USER_BY_ID_NOT_EXISTS = "Пользователь с ID %d не найден";
     private static final String MSG_USER_EMAIL_DUPLICATE = "Пользователь с email %s уже существует";
-    private static final String MSG_USER_EMAIL_IS_BLANK = "Email не должен быть пустым";
 
     @Override
     @Transactional
     public UserDto add(NewUserDto newUserDto) {
-        if (newUserDto.getEmail() == null || newUserDto.getEmail().isBlank()) {
-            throw new IllegalArgumentException(MSG_USER_EMAIL_IS_BLANK);
-        }
         validateEmailUniqueness(newUserDto.getEmail());
         User userToCreate = userMapper.toUser(newUserDto);
 
