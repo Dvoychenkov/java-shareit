@@ -82,11 +82,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto addComment(Long itemId, Long userId, NewCommentDto newCommentDto) {
         Item item = getItemOrThrow(itemId);
         User user = userService.getUserOrThrow(userId);
-
         LocalDateTime now = LocalDateTime.now();
-        // Без явного смещения времени назад не проходит локальный тест Postman'а
-        // Вероятно из-за особенности setTimeout с интервалом в 1000 мс в Pre-request скрипте
-        now = now.minusSeconds(1L);
 
         boolean canComment = bookingRepository.existsByBooker_IdAndItem_IdAndStatusAndEndBefore(
                 userId, itemId, BookingStatus.APPROVED, now);
