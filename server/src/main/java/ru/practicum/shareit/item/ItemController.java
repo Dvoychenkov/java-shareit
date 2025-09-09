@@ -42,9 +42,9 @@ public class ItemController {
 
     @GetMapping
     public Collection<ItemWithBookingsDto> getAllItemsOfOwner(
-            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerID
+            @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId
     ) {
-        return itemService.findAllWithBookingsByOwnerId(ownerID);
+        return itemService.findAllWithBookingsByOwnerId(ownerId);
     }
 
     @GetMapping("/search")

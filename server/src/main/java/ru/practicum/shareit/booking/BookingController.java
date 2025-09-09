@@ -19,7 +19,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingDto create(
+    public BookingDto createBooking(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
             @Valid @RequestBody NewBookingDto newBookingDto
     ) {
@@ -27,7 +27,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDto approve(
+    public BookingDto approveBooking(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @IdValid("bookingId") @PathVariable Long bookingId,
             @RequestParam("approved") boolean approved
@@ -36,7 +36,7 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDto get(
+    public BookingDto getBooking(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
             @IdValid("bookingId") @PathVariable Long bookingId
     ) {
@@ -44,7 +44,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public Collection<BookingDto> byBooker(
+    public Collection<BookingDto> getBookingsByBooker(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long userId,
             @RequestParam(value = "state", defaultValue = "ALL") BookingState state
     ) {
@@ -52,7 +52,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public Collection<BookingDto> byOwner(
+    public Collection<BookingDto> getBookingsByOwner(
             @IdValid("X-Sharer-User-Id") @RequestHeader("X-Sharer-User-Id") Long ownerId,
             @RequestParam(value = "state", defaultValue = "ALL") BookingState state
     ) {
