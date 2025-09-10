@@ -188,24 +188,6 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void createItemRequest_blankDescription_returns400_andNoServiceCall() throws Exception {
-        // given
-        Long xSharerUserId = 1L;
-        NewItemRequestDto newItemRequestDto = new NewItemRequestDto("   ");
-
-        // when/then
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", xSharerUserId.intValue())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(newItemRequestDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        // verify
-        verifyNoInteractions(itemRequestService);
-    }
-
-    @Test
     void getItemRequest_notFound_returns404() throws Exception {
         // given
         Long xSharerUserId = 1L;

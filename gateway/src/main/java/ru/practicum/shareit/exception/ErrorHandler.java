@@ -23,7 +23,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationEx(MethodArgumentNotValidException ex) {
+    public ErrorResponse handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(field -> String.format("%s: %s", field.getField(), field.getDefaultMessage()))
                 .collect(Collectors.joining("; "));

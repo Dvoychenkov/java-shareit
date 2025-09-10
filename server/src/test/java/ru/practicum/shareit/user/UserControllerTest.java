@@ -80,29 +80,6 @@ public class UserControllerTest {
     }
 
     @Test
-    void createUser_emptyEmail_incorrectEmail_returns500() throws Exception {
-        // given
-        NewUserDto newUserDto = new NewUserDto("john", "     ");
-
-        // when/then
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(newUserDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        // given
-        newUserDto = new NewUserDto("john", "john");
-
-        // when/then
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(newUserDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
     void getUser_returnsDto() throws Exception {
         // given
         UserDto userDto = new UserDto(1L, "John", "john@mail.com");

@@ -15,6 +15,8 @@ import ru.practicum.shareit.booking.dto.NewBookingDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.ForbiddenException;
+import ru.practicum.shareit.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +49,6 @@ class BookingControllerTest {
                 now.plusDays(2),
                 100L
         );
-
         BookingDto bookingDto = new BookingDto(
                 10L,
                 newBookingDto.getStart(),
@@ -56,6 +57,7 @@ class BookingControllerTest {
                 new BookingBookerDto(userId),
                 BookingStatus.WAITING
         );
+
         when(bookingService.create(userId, newBookingDto))
                 .thenReturn(bookingDto);
 
@@ -68,6 +70,70 @@ class BookingControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
                 .andExpect(jsonPath("$.status", is(BookingStatus.WAITING.name().toUpperCase())));
+
+        // verify
+        verify(bookingService)
+                .create(
+                        eq(userId),
+                        refEq(newBookingDto)
+                );
+        verifyNoMoreInteractions(bookingService);
+    }
+
+    @Test
+    void create_forbiddenItem_returns403() throws Exception {
+        // given
+        Long userId = 1L;
+        LocalDateTime now = LocalDateTime.now();
+
+        NewBookingDto newBookingDto = new NewBookingDto(
+                now.plusDays(1),
+                now.plusDays(2),
+                100L
+        );
+
+        when(bookingService.create(userId, newBookingDto))
+                .thenThrow(ForbiddenException.class);
+
+        // when / then
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(newBookingDto)))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        // verify
+        verify(bookingService)
+                .create(
+                        eq(userId),
+                        refEq(newBookingDto)
+                );
+        verifyNoMoreInteractions(bookingService);
+    }
+
+    @Test
+    void create_notAvailableItem_returns400() throws Exception {
+        // given
+        Long userId = 1L;
+        LocalDateTime now = LocalDateTime.now();
+
+        NewBookingDto newBookingDto = new NewBookingDto(
+                now.plusDays(1),
+                now.plusDays(2),
+                100L
+        );
+
+        when(bookingService.create(userId, newBookingDto))
+                .thenThrow(ValidationException.class);
+
+        // when / then
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(newBookingDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
         // verify
         verify(bookingService)
@@ -173,21 +239,5 @@ class BookingControllerTest {
         // verify
         verify(bookingService).getByOwner(ownerId, BookingState.WAITING);
         verifyNoMoreInteractions(bookingService);
-    }
-
-    @Test
-    void byBooker_invalidState_returns400() throws Exception {
-        // given
-        Long userId = 2L;
-
-        // when / then
-        mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", userId)
-                        .param("state", "NOT_EXISTING_STATE"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        // verify
-        verifyNoInteractions(bookingService);
     }
 }

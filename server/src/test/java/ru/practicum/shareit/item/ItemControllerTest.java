@@ -187,43 +187,6 @@ class ItemControllerTest {
     }
 
     @Test
-    void createItem_validationError_blankName_returns400() throws Exception {
-        // given
-        Long ownerId = 1L;
-        NewItemDto bad = new NewItemDto("  ", "desc", true, null);
-
-        // when/then
-        mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", ownerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(bad)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-        // verify
-        verifyNoInteractions(itemService);
-    }
-
-    @Test
-    void addComment_blankText_returns400() throws Exception {
-        // given
-        Long userId = 2L;
-        Long itemId = 10L;
-
-        NewCommentDto newCommentDto = new NewCommentDto("     ");
-
-        // when/then
-        mockMvc.perform(post("/items/{id}/comment", itemId)
-                        .header("X-Sharer-User-Id", userId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(newCommentDto)))
-                .andExpect(status().isBadRequest());
-
-        // verify
-        verifyNoInteractions(itemService);
-    }
-
-    @Test
     void search_withText_returnsListDtos() throws Exception {
         // given
         Long xSharerUserId = 1L;
@@ -324,7 +287,8 @@ class ItemControllerTest {
                         .content(objectMapper.writeValueAsBytes(updateItemDto)))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.error", is(errMsg)));;
+                .andExpect(jsonPath("$.error", is(errMsg)));
+        ;
 
         // verify
         verify(itemService)
