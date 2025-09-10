@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -48,14 +49,12 @@ class CommentDtoJsonTest {
         LocalDateTime created = LocalDateTime.of(2030, 1, 1, 12, 0);
         String createdStr = dtFormatter.format(created);
 
-        String raw = String.format("""
-                {
-                    "id": %d,
-                    "text": "%s",
-                    "authorName": "%s",
-                    "created": "%s"
-                }
-                """, commentId.intValue(), commentText, authorName, createdStr);
+        String raw = new JSONObject()
+                .put("id", commentId.intValue())
+                .put("text", commentText)
+                .put("authorName", authorName)
+                .put("created", createdStr)
+                .toString();
 
         // when
         CommentDto parsed = jacksonTester.parseObject(raw);

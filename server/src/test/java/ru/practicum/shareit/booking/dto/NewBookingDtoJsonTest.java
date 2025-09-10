@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -46,13 +47,11 @@ class NewBookingDtoJsonTest {
         LocalDateTime end = LocalDateTime.of(2030, 1, 3, 10, 0, 0);
         Long itemId = 5L;
 
-        String raw = String.format("""
-                {
-                    "start": "%s",
-                    "end": "%s",
-                    "itemId": %d
-                }
-                """, dtFormatter.format(start), dtFormatter.format(end), itemId);
+        String raw = new JSONObject()
+                .put("start", dtFormatter.format(start))
+                .put("end", dtFormatter.format(end))
+                .put("itemId", itemId)
+                .toString();
 
         // when
         NewBookingDto parsed = jacksonTester.parseObject(raw);

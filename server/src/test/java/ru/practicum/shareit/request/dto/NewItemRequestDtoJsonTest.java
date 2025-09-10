@@ -3,6 +3,7 @@ package ru.practicum.shareit.request.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -32,11 +33,11 @@ class NewItemRequestDtoJsonTest {
     void deserialize() throws Exception {
         // given
         String description = "Нужен пылесос";
-        String raw = String.format("""
-                {
-                    "description": "%s"
-                }
-                """, description);
+
+        JSONObject itemJson = new JSONObject()
+                .put("description", description);
+
+        String raw = itemJson.toString();
 
         // when
         NewItemRequestDto newItemRequestDto = jacksonTester.parseObject(raw);

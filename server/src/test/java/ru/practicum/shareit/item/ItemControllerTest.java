@@ -134,20 +134,20 @@ class ItemControllerTest {
 
         BookingTimeDto last = new BookingTimeDto(now.minusDays(2), now.minusDays(1));
         BookingTimeDto next = new BookingTimeDto(now.plusDays(1), now.plusDays(2));
-        List<ItemWithBookingsDto> ItemsWithBookingsDtos = List.of(
+        List<ItemWithBookingsDto> itemWithBookingsDtos = List.of(
                 new ItemWithBookingsDto(10L, "Перфоратор", "Мощнейший",
                         true, last, next, List.of())
         );
 
         when(itemService.findAllWithBookingsByOwnerId(ownerId))
-                .thenReturn(ItemsWithBookingsDtos);
+                .thenReturn(itemWithBookingsDtos);
 
         // when/then
         mockMvc.perform(get("/items")
                         .header("X-Sharer-User-Id", ownerId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(ItemsWithBookingsDtos.size())))
+                .andExpect(jsonPath("$", hasSize(itemWithBookingsDtos.size())))
                 .andExpect(jsonPath("$[0].lastBooking.start", notNullValue()))
                 .andExpect(jsonPath("$[0].nextBooking.start", notNullValue()));
 

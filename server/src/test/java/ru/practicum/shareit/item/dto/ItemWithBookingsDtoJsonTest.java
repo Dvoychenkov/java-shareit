@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -76,26 +78,22 @@ class ItemWithBookingsDtoJsonTest {
         LocalDateTime commentDtoCreated = LocalDateTime.of(2030, 1, 1, 10, 0);
         String commentDtoCreatedStr = dtFormatter.format(commentDtoCreated);
 
-        String raw = String.format("""
-                {
-                    "id": %d,
-                    "name": "%s",
-                    "description": "%s",
-                    "available": %b,
-                    "lastBooking": %s,
-                    "nextBooking": %s,
-                    "comments": [
-                        {
-                            "id": %d,
-                            "text": "%s",
-                            "authorName": "%s",
-                            "created": "%s"
-                        }
-                    ]
-                }
-                """, (int) itemWithBookingsDtoId, itemWithBookingsDtoName, itemWithBookingsDtoDescription,
-                itemWithBookingsDtoAvailable, itemWithBookingsDtoBookingsDates, itemWithBookingsDtoBookingsDates,
-                (int) commentDtoId, commentDtoText, commentDtoAuthorName, commentDtoCreatedStr);
+        JSONObject comment = new JSONObject()
+                .put("id", (int) commentDtoId)
+                .put("text", commentDtoText)
+                .put("authorName", commentDtoAuthorName)
+                .put("created", commentDtoCreatedStr);
+
+        JSONObject item = new JSONObject()
+                .put("id", (int) itemWithBookingsDtoId)
+                .put("name", itemWithBookingsDtoName)
+                .put("description", itemWithBookingsDtoDescription)
+                .put("available", itemWithBookingsDtoAvailable)
+                .put("lastBooking", JSONObject.NULL)
+                .put("nextBooking", JSONObject.NULL)
+                .put("comments", new JSONArray().put(comment));
+
+        String raw = item.toString();
 
         // when
         ItemWithBookingsDto parsed = jacksonTester.parseObject(raw);

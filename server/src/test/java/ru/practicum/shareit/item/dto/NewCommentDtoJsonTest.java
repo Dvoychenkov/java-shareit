@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -32,11 +33,11 @@ class NewCommentDtoJsonTest {
     void deserialize() throws Exception {
         // given
         String text = "Отличная вещь!";
-        String raw = String.format("""
-                {
-                    "text": "%s"
-                }
-                """, text);
+
+        JSONObject commentJson = new JSONObject()
+                .put("text", text);
+
+        String raw = commentJson.toString();
 
         // when
         NewCommentDto newCommentDto = jacksonTester.parseObject(raw);

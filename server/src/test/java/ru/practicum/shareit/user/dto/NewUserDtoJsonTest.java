@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.dto;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -35,12 +36,12 @@ public class NewUserDtoJsonTest {
         // given
         String name = "Jane";
         String email = "jane@mail.com";
-        String raw = String.format("""
-                    {
-                        "name": "%s",
-                        "email": "%s"
-                    }
-                """, name, email);
+
+        JSONObject userJson = new JSONObject()
+                .put("name", name)
+                .put("email", email);
+
+        String raw = userJson.toString();
 
         // when
         NewUserDto newUserDto = jacksonTester.parseObject(raw);
