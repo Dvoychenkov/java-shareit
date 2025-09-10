@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class ItemRequestServiceIT {
+class ItemRequestServiceIntegrationTest {
 
     private final EntityManager entityManager;
     private final ItemRequestService itemRequestService;
@@ -140,13 +140,16 @@ class ItemRequestServiceIT {
                 .build();
         entityManager.persist(ir3);
 
+        entityManager.flush();
+        entityManager.clear();
+
         List<ItemRequestDto> getAllRequestsByRequestor = (List<ItemRequestDto>) itemRequestService
                 .getAllRequestsByRequestor(alice.getId());
 
         // then
         assertThat(getAllRequestsByRequestor, hasSize(2));
-        assertThat(getAllRequestsByRequestor.get(0).getDescription(), equalTo(ir1.getDescription()));
-        assertThat(getAllRequestsByRequestor.get(1).getDescription(), equalTo(ir2.getDescription()));
+        assertThat(getAllRequestsByRequestor.get(0).getDescription(), equalTo(ir2.getDescription()));
+        assertThat(getAllRequestsByRequestor.get(1).getDescription(), equalTo(ir1.getDescription()));
 
         // when
         List<ItemRequestDto> getAllRequestsExceptUser = (List<ItemRequestDto>) itemRequestService

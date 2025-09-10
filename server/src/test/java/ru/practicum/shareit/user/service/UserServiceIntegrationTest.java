@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @org.springframework.beans.factory.annotation.Autowired)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class UserServiceIT {
+class UserServiceIntegrationTest {
 
     private final EntityManager em;
     private final UserService userService;

@@ -100,6 +100,11 @@
 					<version>0.8.12</version>
 					<configuration>
 						<output>file</output>
+						<excludes>
+							<exclude>**/*Mapper.class</exclude>
+							<exclude>**/*MapperImpl.class</exclude>
+							<exclude>**/ShareItServer.class</exclude>
+						</excludes>
 					</configuration>
 					<executions>
 						<execution>

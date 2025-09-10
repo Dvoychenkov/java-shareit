@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class ItemServiceIT {
+class ItemServiceIntegrationTest {
 
     private final EntityManager entityManager;
     private final ItemService itemService;
