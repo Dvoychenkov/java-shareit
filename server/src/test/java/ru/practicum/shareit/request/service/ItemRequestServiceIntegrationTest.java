@@ -140,9 +140,6 @@ class ItemRequestServiceIntegrationTest {
                 .build();
         entityManager.persist(ir3);
 
-        entityManager.flush();
-        entityManager.clear();
-
         List<ItemRequestDto> getAllRequestsByRequestor = (List<ItemRequestDto>) itemRequestService
                 .getAllRequestsByRequestor(alice.getId());
 

@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.utils.ValidationUtils.requireExists;
@@ -54,8 +53,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.existsByIdOrThrow(requestorId);
 
         Collection<ItemRequest> requests = itemRequestRepository.findByRequestor_IdOrderByCreatedDesc(requestorId);
-        Map<ItemRequest, Collection<Item>> answersForRequests = collectAnswersForRequests(requests);
-        return itemRequestMapper.mapToItemRequestDtos(answersForRequests);
+        return collectAnswersForRequests(requests);
     }
 
     @Override
@@ -63,8 +61,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.existsByIdOrThrow(userId);
 
         Collection<ItemRequest> requests = itemRequestRepository.findByRequestor_IdNotOrderByCreatedDesc(userId);
-        Map<ItemRequest, Collection<Item>> answersForRequests = collectAnswersForRequests(requests);
-        return itemRequestMapper.mapToItemRequestDtos(answersForRequests);
+        return collectAnswersForRequests(requests);
     }
 
     @Override
@@ -86,9 +83,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         requireExists(itemRequestRepository.existsById(id), () -> String.format(MSG_REQUEST_BY_ID_NOT_EXISTS, id));
     }
 
-    private Map<ItemRequest, Collection<Item>> collectAnswersForRequests(Collection<ItemRequest> requests) {
+    private Collection<ItemRequestDto> collectAnswersForRequests(Collection<ItemRequest> requests) {
         if (requests.isEmpty()) {
-            return Map.of();
+            return List.of();
         }
 
         List<Long> requestsIds = requests.stream()
@@ -101,9 +98,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.groupingBy(Item::getRequest));
 
         return requests.stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        request -> requestsIdsToItems.getOrDefault(request.getId(), List.of())
-                ));
+                .map(request -> itemRequestMapper.toItemRequestDto(
+                        request,
+                        requestsIdsToItems.getOrDefault(request.getId(), List.of())
+                ))
+                .toList();
     }
 }

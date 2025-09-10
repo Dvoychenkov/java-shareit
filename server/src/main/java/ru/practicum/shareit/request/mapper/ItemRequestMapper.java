@@ -34,14 +34,4 @@ public interface ItemRequestMapper {
         }
         return new ItemAnswerDto(item.getId(), item.getName(), item.getOwner());
     }
-
-    default Collection<ItemRequestDto> mapToItemRequestDtos(Map<ItemRequest, Collection<Item>> itemsRequestsToItems) {
-        if (itemsRequestsToItems == null || itemsRequestsToItems.isEmpty()) {
-            return List.of();
-        }
-
-        return itemsRequestsToItems.entrySet().stream()
-                .map(itemRequestToItems -> toItemRequestDto(itemRequestToItems.getKey(), itemRequestToItems.getValue()))
-                .toList();
-    }
 }
